@@ -30,7 +30,7 @@ namespace projectX.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Comment,MovieId,UserId")] Review review)
+        public async Task<IActionResult> Create([Bind("Id,Comment,Title,Username")] Review review)
         {
             var user = _context.Users.FirstOrDefault(x => x.Id == review.UserId);
             var movie = _context.Movies.FirstOrDefault(x => x.Id == review.MovieId);
@@ -49,12 +49,12 @@ namespace projectX.Controllers
             return View(review);
         }
 
-        private void PopulateDropdowns(object selectedUserId = null, object selectedScreeningId = null)
+        private void PopulateDropdowns(object? selectedUserId = null, object? selectedScreeningId = null)
         {
             var users = _context.Users?.ToList() ?? new List<User>();
             var movies = _context.Movies?.ToList() ?? new List<Movie>();
 
-            ViewData["MovieId"] = new SelectList(movies, "Id", "Name", selectedScreeningId);
+            ViewData["MovieId"] = new SelectList(movies, "Id", "Title", selectedScreeningId);
             ViewData["UserId"] = new SelectList(users, "Id", "Username", selectedUserId);
         }
 

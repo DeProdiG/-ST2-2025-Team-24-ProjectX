@@ -6,12 +6,16 @@
     <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label asp-for="MovieId" class="control-label"></label>
-        <input asp-for="MovieId" class="form-control" />
+        <select asp-for="MovieId" class="form-control" asp-items="ViewBag.MovieId">
+            <option value="">-- Select Movie --</option>
+        </select>
         <span asp-validation-for="MovieId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="UserId" class="control-label"></label>
-        <input asp-for="UserId" class="form-control" />
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId">
+            <option value="">-- Select User --</option>
+        </select>
         <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
     <div class="form-group">

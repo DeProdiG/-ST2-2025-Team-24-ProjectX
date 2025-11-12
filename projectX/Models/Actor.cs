@@ -11,6 +11,6 @@ namespace projectX.Models
         public string? Surname { get; set; }
         [Required]
         public DateTime DateOfBirth { get; set; }
-        public ICollection<MovieActors> MovieActors { get; set; }
+        public ICollection<MovieActors>? MovieActors { get; set; } = new List<MovieActors>();
     }
 }

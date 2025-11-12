@@ -1,31 +1,483 @@
 ﻿@model IEnumerable<projectX.Models.Screening>
 
-<h1>Screenings</h1>
+@{
+    ViewData["Title"] = "Movie Screenings";
+}
 
-<a asp-action="Create" class="btn btn-primary">Add New Screening</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Movie name</th>
-            <th>ScreeningTime</th>
-            <td>Cinema</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var screening in Model)
-        {
-            <tr>
-                <td>@screening.Id</td>
-                <td>@screening.Name</td>
-                <td>@screening.ScreeningTime</td>
-                <td>@string.Join(", ", screening.ScreeningCinemas.Select(sc => sc.Cinema.Name))</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@screening.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@screening.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+@section Styles {
+    <style>
+        /* Fix for fixed-top navbar covering content */
+        .navbar-fixed-top-fix {
+            padding-top: 80px;
         }
-    </tbody>
-</table>
+
+        @@media (max-width: 768px) {
+            .navbar-fixed-top-fix {
+                padding-top: 70px;
+            }
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 300px;
+                height: 300px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 50%;
+                transform: translate(100px, -100px);
+            }
+
+        .screening-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+            .screening-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+                border-color: #667eea;
+            }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .card-header {
+            border-bottom: none;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 0.75em;
+        }
+
+        .fs-7 {
+            font-size: 0.75rem;
+        }
+
+        .stat-item {
+            padding: 1rem;
+        }
+
+            .stat-item h3 {
+                font-weight: 700;
+            }
+
+        .feature-icon {
+            opacity: 0.8;
+        }
+
+        .progress {
+            background-color: #e9ecef;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem !important;
+            }
+
+            .display-4 {
+                font-size: 2rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .btn-group-responsive {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+                .btn-group-responsive .btn {
+                    width: 100%;
+                }
+        }
+
+        /* Search and filter animations */
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+        }
+
+        .fade-in {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.3s ease;
+        }
+
+        .loading-card {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+}
+
+<div class="
+bar-fixed-top-fix">
+    <div class="container-fluid px-4">
+        <!-- Header Section -->
+        <div class="row mb-5 navbar-fixed-top-fix">
+            <div class="col-12">
+                <div class="hero-section bg-dark text-white rounded-3 p-5 mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-4 fw-bold mb-3">🎬 Movie Screenings</h1>
+                            <p class="lead mb-4">Discover all upcoming movie showtimes and book your tickets in advance</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-primary fs-6">4K Projection</span>
+                                <span class="badge bg-success fs-6">Dolby Atmos</span>
+                                <span class="badge bg-warning text-dark fs-6">Comfort Seating</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-calendar-week display-1 text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Search by screening name...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="cinemaFilter" class="form-select">
+                                    <option value="">All Cinemas</option>
+                                    @if (Model.Any())
+                                    {
+                                        var cinemas = Model
+                                        .SelectMany(s => s.ScreeningCinemas)
+                                        .Where(sc => sc.Cinema != null)
+                                        .Select(sc => sc.Cinema.Name)
+                                        .Where(name => !string.IsNullOrEmpty(name))
+                                        .Distinct()
+                                        .OrderBy(name => name);
+
+                                        foreach (var cinema in cinemas)
+                                        {
+                                            <option value="@cinema">@cinema</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex gap-2 btn-group-responsive">
+                                    <a asp-action="Create" class="btn btn-primary flex-fill">
+                                        <i class="bi bi-plus-circle me-2"></i>Add New Screening
+                                    </a>
+                                    <button id="todayBtn" class="btn btn-outline-primary">Today</button>
+                                    <button id="resetBtn" class="btn btn-outline-secondary">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screenings Grid -->
+        <div class="row" id="screeningsGrid">
+            @if (Model.Any())
+            {
+                foreach (var screening in Model)
+                {
+                    <div class="col-xl-4 col-lg-6 col-md-6 mb-4 screening-card loading-card"
+                         data-cinemas="@string.Join(",", screening.ScreeningCinemas?.Select(sc => sc.Cinema?.Name) ?? new List<string>())"
+                         data-title="@screening.Name?.ToLower()"
+                         data-date="@screening.ScreeningTime.ToString("yyyy-MM-dd")">
+
+                        <div class="card h-100 shadow-sm border-0">
+                            <!-- Card Header -->
+                            <div class="card-header bg-gradient-primary text-white py-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="card-title mb-1 fw-bold">@screening.Name</h5>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-clock"></i>
+                                            <small>@screening.ScreeningTime.ToString("dd MMM yyyy • hh:mm tt")</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-light text-dark fs-7">
+                                        @screening.ScreeningTime.ToString("ddd")
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <!-- Movies Section -->
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="bi bi-film me-2"></i>Movies
+                                    </h6>
+                                    @if (screening.ScreeningMovies?.Any() == true)
+                                    {
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach (var movie in screening.ScreeningMovies.Take(3))
+                                            {
+                                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                                                    @movie.Movie?.Title
+                                                </span>
+                                            }
+                                            @if (screening.ScreeningMovies.Count > 3)
+                                            {
+                                                <span class="badge bg-secondary">+@(screening.ScreeningMovies.Count - 3) more</span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No movies assigned</span>
+                                    }
+                                </div>
+
+                                <!-- Cinemas Section -->
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="bi bi-geo-alt me-2"></i>Locations
+                                    </h6>
+                                    @if (screening.ScreeningCinemas?.Any() == true)
+                                    {
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach (var cinema in screening.ScreeningCinemas.Take(2))
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                                                    <i class="bi bi-building me-1"></i>@cinema.Cinema?.Name
+                                                </span>
+                                            }
+                                            @if (screening.ScreeningCinemas.Count > 2)
+                                            {
+                                                <span class="badge bg-secondary">+@(screening.ScreeningCinemas.Count - 2) more</span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No cinemas assigned</span>
+                                    }
+                                </div>
+
+                                <!-- Tickets Info -->
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="bi bi-ticket-perforated me-2"></i>Tickets
+                                    </h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                            @{
+                                                var ticketCount = screening.Tickets?.Count ?? 0;
+                                                var progressWidth = Math.Min(ticketCount * 10, 100);
+                                            }
+                                            <div class="progress-bar bg-warning" style="width: @progressWidth%"></div>
+                                        </div>
+                                        <small class="text-muted">@ticketCount booked</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="card-footer bg-transparent border-0 pt-0">
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Edit" asp-route-id="@screening.Id" class="btn btn-outline-primary btn-sm flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@screening.Id" class="btn btn-outline-info btn-sm flex-fill">
+                                        <i class="bi bi-info-circle me-1"></i>Details
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@screening.Id" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="card text-center py-5">
+                        <div class="card-body">
+                            <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                            <h3 class="text-muted">No Screenings Available</h3>
+                            <p class="text-muted mb-4">There are no movie screenings scheduled at the moment.</p>
+                            <a asp-action="Create" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-circle me-2"></i>Create First Screening
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Statistics Section -->
+        @if (Model.Any())
+        {
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <h3 class="text-primary mb-1">@Model.Count()</h3>
+                                        <p class="text-muted mb-0">Total Screenings</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <h3 class="text-success mb-1">
+                                            @Model.SelectMany(s => s.ScreeningMovies).Select(sm => sm.MovieId).Distinct().Count()
+                                        </h3>
+                                        <p class="text-muted mb-0">Unique Movies</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <h3 class="text-warning mb-1">
+                                            @Model.SelectMany(s => s.ScreeningCinemas).Select(sc => sc.CinemaId).Distinct().Count()
+                                        </h3>
+                                        <p class="text-muted mb-0">Cinema Locations</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="stat-item">
+                                        <h3 class="text-info mb-1">
+                                            @Model.Sum(s => s.Tickets?.Count ?? 0)
+                                        </h3>
+                                        <p class="text-muted mb-0">Tickets Booked</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const cinemaFilter = document.getElementById('cinemaFilter');
+            const todayBtn = document.getElementById('todayBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const screeningCards = document.querySelectorAll('.screening-card');
+
+            // Search functionality
+            searchInput.addEventListener('input', function () {
+                filterScreenings();
+            });
+
+            // Cinema filter functionality
+            cinemaFilter.addEventListener('change', function () {
+                filterScreenings();
+            });
+
+            // Today button functionality
+            todayBtn.addEventListener('click', function () {
+                const today = new Date().toISOString().split('T')[0];
+                screeningCards.forEach(card => {
+                    const cardDate = card.getAttribute('data-date');
+                    if (cardDate === today) {
+                        showCard(card);
+                    } else {
+                        hideCard(card);
+                    }
+                });
+                updateResultsCount();
+            });
+
+            // Reset button functionality
+            resetBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                cinemaFilter.value = '';
+                screeningCards.forEach(card => {
+                    showCard(card);
+                });
+                updateResultsCount();
+            });
+
+            function filterScreenings() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const selectedCinema = cinemaFilter.value.toLowerCase();
+
+                screeningCards.forEach(card => {
+                    const title = card.getAttribute('data-title');
+                    const cinemas = card.getAttribute('data-cinemas').toLowerCase();
+
+                    const matchesSearch = searchTerm === '' || title.includes(searchTerm);
+                    const matchesCinema = selectedCinema === '' || cinemas.includes(selectedCinema);
+
+                    if (matchesSearch && matchesCinema) {
+                        showCard(card);
+                    } else {
+                        hideCard(card);
+                    }
+                });
+                updateResultsCount();
+            }
+
+            function showCard(card) {
+                card.style.display = 'block';
+                card.classList.add('fade-in');
+                card.classList.remove('fade-out');
+            }
+
+            function hideCard(card) {
+                card.classList.add('fade-out');
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+            }
+
+            function updateResultsCount() {
+                const visibleCards = document.querySelectorAll('.screening-card[style="display: block"], .screening-card:not([style])');
+                const resultsCount = visibleCards.length;
+
+                // You could display this count somewhere if needed
+                console.log(`Showing ${resultsCount} of ${screeningCards.length} screenings`);
+            }
+
+            // Animate cards in on page load
+            setTimeout(() => {
+                screeningCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 200);
+
+            // Initialize results count
+            updateResultsCount();
+        });
+    </script>
+}

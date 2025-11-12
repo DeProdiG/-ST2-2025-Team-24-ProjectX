@@ -1,34 +1,748 @@
 ﻿@model IEnumerable<projectX.Models.Movie>
+@{
+    ViewData["Title"] = "Movies";
+}
 
-<h1>Movies</h1>
-
-<a asp-action="Create" class="btn btn-primary">Add New Movie</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Duration</th>
-            <th>Release Date</th>
-            <th>Rating</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var movie in Model)
-        {
-            <tr>
-                <td>@movie.Id</td>
-                <td>@movie.Title</td>
-                <td>@movie.Duration</td>
-                <td>@movie.ReleaseDate.ToShortDateString()</td>
-                <td>@movie.Rating</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Collection Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* COMPLETE CSS RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
         }
-    </tbody>
-</table>
+
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100%;
+            width: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            line-height: 1.5;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f8fafc;
+            --accent-color: #f59e0b;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* HEADER - FIXED FOR BUTTON */
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 7rem 0;
+            margin: 60px 0px 0px;
+            width: 100%;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            width: 100%;
+        }
+
+        .header-btn {
+            background: white !important;
+            color: var(--primary-color) !important;
+            border: 2px solid white !important;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 54px;
+        }
+
+            .header-btn:hover {
+                background: rgba(255, 255, 255, 0.9) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.3);
+            }
+
+        /* MAIN CONTENT */
+        .main-container {
+            width: 100%;
+            margin: 0;
+            padding: 2rem 15px;
+        }
+
+        .movie-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+
+            .movie-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--card-hover-shadow);
+            }
+
+        .movie-poster {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .movie-details {
+            padding: 1.5rem;
+        }
+
+        .movie-title {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .movie-meta {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .movie-rating {
+            margin-bottom: 0.75rem;
+        }
+
+        .movie-actors {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            line-height: 1.4;
+        }
+
+        .btn-action {
+            border-radius: 6px;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+            .empty-state i {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                color: #cbd5e1;
+            }
+
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            height: 100%;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+            .view-toggle button {
+                background: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                transition: all 0.2s;
+            }
+
+                .view-toggle button.active {
+                    background: var(--primary-color);
+                    color: white;
+                }
+
+                .view-toggle button:first-child {
+                    border-right: 1px solid #e2e8f0;
+                }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .actor-badge {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+
+        /* Bootstrap container override */
+        .container {
+            max-width: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        @@media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
+
+        @@media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+
+            .header-section {
+                padding: 4rem 0;
+                min-height: 220px;
+            }
+        }
+
+        @@media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @@media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        @@media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
+        }
+
+        @@media (max-width: 767px) {
+            .movie-card {
+                margin-bottom: 1rem;
+            }
+
+            .header-section {
+                padding: 2.5rem 0;
+                min-height: 180px;
+            }
+
+                .header-section h1 {
+                    font-size: 2rem;
+                }
+
+            .header-btn {
+                padding: 0.6rem 1.2rem !important;
+                min-height: 48px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section - Fixed for button visibility -->
+    <div class="header-section">
+        <div class="header-content">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 fw-bold mb-2">Movie Collection</h1>
+                        <p class="lead mb-0">Browse and manage your favorite films</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a asp-action="Create" class="btn header-btn">
+                            <i class="bi bi-plus-circle me-2"></i> Add New Movie
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="container">
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-number">@Model.Count()</div>
+                        <div class="stats-label">Total Movies</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        @{
+                            double avgRating = 0.0;
+                            if (Model.Any())
+                            {
+                                avgRating = Model.Average(m => m.Rating);
+                            }
+                        }
+                        <div class="stats-number">@avgRating.ToString("0.0")</div>
+                        <div class="stats-label">Average Rating</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        @{
+                            int totalActors = 0;
+                            var actorIds = new HashSet<int>();
+                            foreach (var movie in Model)
+                            {
+                                if (movie.MovieActors != null)
+                                {
+                                    foreach (var movieActor in movie.MovieActors)
+                                    {
+                                        if (movieActor.Actor != null)
+                                        {
+                                            actorIds.Add(movieActor.Actor.Id);
+                                        }
+                                    }
+                                }
+                            }
+                            totalActors = actorIds.Count;
+                        }
+                        <div class="stats-number">@totalActors</div>
+                        <div class="stats-label">Total Actors</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        @{
+                            string latestYear = "N/A";
+                            if (Model.Any())
+                            {
+                                var latestDate = DateTime.MinValue;
+                                foreach (var movie in Model)
+                                {
+                                    if (movie.ReleaseDate > latestDate)
+                                    {
+                                        latestDate = movie.ReleaseDate;
+                                    }
+                                }
+                                latestYear = latestDate.Year.ToString();
+                            }
+                        }
+                        <div class="stats-number">@latestYear</div>
+                        <div class="stats-label">Latest Release</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-2">
+                        <h5 class="mb-0">All Movies</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end align-items-center">
+                            <div class="view-toggle me-3">
+                                <button class="active" id="cardViewBtn">
+                                    <i class="bi bi-grid-3x3-gap"></i>
+                                </button>
+                                <button id="tableViewBtn">
+                                    <i class="bi bi-list-task"></i>
+                                </button>
+                            </div>
+                            <div class="input-group w-auto">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search movies...">
+                                <button class="btn btn-outline-secondary" type="button" id="filterBtn">Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card View -->
+            <div id="cardView">
+                <div class="row" id="movieCardsContainer">
+                    @foreach (var movie in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 movie-card-item">
+                            <div class="movie-card">
+                                <div class="movie-poster">
+                                    @movie.Title
+                                </div>
+                                <div class="movie-details">
+                                    <h3 class="movie-title">@movie.Title</h3>
+                                    <div class="movie-meta">
+                                        <span>@movie.Duration mins • @movie.ReleaseDate.ToString("dd MMM yyyy")</span>
+                                    </div>
+                                    <div class="movie-rating">
+                                        @for (int i = 0; i < 5; i++)
+                                        {
+                                            if (i < movie.Rating)
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star text-secondary"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="movie-actors">
+                                        @if (movie.MovieActors != null && movie.MovieActors.Any())
+                                        {
+                                            var actorNames = new List<string>();
+                                            foreach (var movieActor in movie.MovieActors)
+                                            {
+                                                if (movieActor.Actor != null)
+                                                {
+                                                    actorNames.Add(movieActor.Actor.Name + " " + movieActor.Actor.Surname);
+                                                }
+                                            }
+
+                                            <div>
+                                                @for (int i = 0; i < Math.Min(3, actorNames.Count); i++)
+                                                {
+                                                    <span class="actor-badge">@actorNames[i]</span>
+                                                }
+                                                @if (actorNames.Count > 3)
+                                                {
+                                                    <span class="actor-badge">+@(actorNames.Count - 3) more</span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No actors assigned</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-outline-primary btn-action">
+                                            <i class="bi bi-pencil-square me-1"></i> Edit
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-outline-danger btn-action">
+                                            <i class="bi bi-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="bi bi-film"></i>
+                                <h4>No movies found</h4>
+                                <p>Get started by adding your first movie to the collection.</p>
+                                <a asp-action="Create" class="btn btn-primary mt-3">
+                                    <i class="bi bi-plus-circle me-2"></i> Add New Movie
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Table View (Hidden by default) -->
+            <div id="tableView" style="display: none;">
+                <div class="table-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="moviesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Title</th>
+                                        <th>Duration</th>
+                                        <th>Release Date</th>
+                                        <th>Rating</th>
+                                        <th>Actors</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="moviesTableBody">
+                                    @foreach (var movie in Model)
+                                    {
+                                        <tr class="movie-table-row">
+                                            <td>@movie.Id</td>
+                                            <td>@movie.Title</td>
+                                            <td>@movie.Duration mins</td>
+                                            <td>@movie.ReleaseDate.ToString("dd MMM yyyy")</td>
+                                            <td>
+                                                @for (int i = 0; i < 5; i++)
+                                                {
+                                                    if (i < movie.Rating)
+                                                    {
+                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-star text-secondary"></i>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (movie.MovieActors != null && movie.MovieActors.Any())
+                                                {
+                                                    var actorNames = new List<string>();
+                                                    foreach (var movieActor in movie.MovieActors)
+                                                    {
+                                                        if (movieActor.Actor != null)
+                                                        {
+                                                            actorNames.Add(movieActor.Actor.Name + " " + movieActor.Actor.Surname);
+                                                        }
+                                                    }
+
+                                                    <span title="@string.Join(", ", actorNames)">
+                                                        @string.Join(", ", actorNames.Take(3))
+                                                        @(actorNames.Count > 3 ? "..." : "")
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No actors assigned</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-warning btn-sm me-1">
+                                                    <i class="bi bi-pencil-square"></i> Edit
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                    @if (!Model.Any())
+                                    {
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4">
+                                                <div class="empty-state">
+                                                    <i class="bi bi-film"></i>
+                                                    <h4>No movies found</h4>
+                                                    <p>Get started by adding your first movie to the collection.</p>
+                                                    <a asp-action="Create" class="btn btn-primary mt-3">
+                                                        <i class="bi bi-plus-circle me-2"></i> Add New Movie
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Force reset all margins and padding on load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Reset body and html
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.documentElement.style.margin = '0';
+            document.documentElement.style.padding = '0';
+
+            // Ensure header has enough space
+            const header = document.querySelector('.header-section');
+            if (header) {
+                header.style.margin = '0';
+                header.style.padding = '7rem 0 2rem 0';
+            }
+
+            // Set up event listeners
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+            const searchInput = document.getElementById('searchInput');
+            const filterBtn = document.getElementById('filterBtn');
+
+            if (cardViewBtn && tableViewBtn) {
+                cardViewBtn.addEventListener('click', showCardView);
+                tableViewBtn.addEventListener('click', showTableView);
+            }
+
+            if (filterBtn && searchInput) {
+                filterBtn.addEventListener('click', applyFilter);
+                searchInput.addEventListener('keyup', function (event) {
+                    if (event.key === 'Enter') {
+                        applyFilter();
+                    }
+                });
+            }
+        });
+
+        function showCardView() {
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+
+            if (cardView) cardView.style.display = 'block';
+            if (tableView) tableView.style.display = 'none';
+            if (cardViewBtn) cardViewBtn.classList.add('active');
+            if (tableViewBtn) tableViewBtn.classList.remove('active');
+        }
+
+        function showTableView() {
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+            const cardViewBtn = document.getElementById('cardViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+
+            if (cardView) cardView.style.display = 'none';
+            if (tableView) tableView.style.display = 'block';
+            if (tableViewBtn) tableViewBtn.classList.add('active');
+            if (cardViewBtn) cardViewBtn.classList.remove('active');
+        }
+
+        function applyFilter() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const movieCards = document.querySelectorAll('.movie-card-item');
+            const tableRows = document.querySelectorAll('.movie-table-row');
+            const movieCardsContainer = document.getElementById('movieCardsContainer');
+            const moviesTableBody = document.getElementById('moviesTableBody');
+
+            let visibleCardCount = 0;
+            let visibleRowCount = 0;
+
+            // Filter cards
+            movieCards.forEach(card => {
+                const title = card.querySelector('.movie-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    visibleCardCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Filter table rows
+            tableRows.forEach(row => {
+                const title = row.cells[1].textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleRowCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Handle empty states
+            const cardView = document.getElementById('cardView');
+            const tableView = document.getElementById('tableView');
+
+            if (visibleCardCount === 0 && cardView && cardView.style.display !== 'none') {
+                if (!movieCardsContainer.querySelector('.empty-state')) {
+                    movieCardsContainer.innerHTML = `
+                                <div class="col-12">
+                                    <div class="empty-state">
+                                        <i class="bi bi-film"></i>
+                                        <h4>No movies found</h4>
+                                        <p>Try adjusting your search or add a new movie.</p>
+                                        <a href="/Movies/Create" class="btn btn-primary mt-3">
+                                            <i class="bi bi-plus-circle me-2"></i> Add New Movie
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+                }
+            }
+
+            if (visibleRowCount === 0 && tableView && tableView.style.display !== 'none') {
+                if (!moviesTableBody.querySelector('.empty-state')) {
+                    moviesTableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="empty-state">
+                                            <i class="bi bi-film"></i>
+                                            <h4>No movies found</h4>
+                                            <p>Try adjusting your search or add a new movie.</p>
+                                            <a href="/Movies/Create" class="btn btn-primary mt-3">
+                                                <i class="bi bi-plus-circle me-2"></i> Add New Movie
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                }
+            }
+
+            // Reload if search is cleared and empty states are present
+            if (searchTerm === '' &&
+                (movieCardsContainer.querySelector('.empty-state') ||
+                    (moviesTableBody && moviesTableBody.querySelector('.empty-state')))) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

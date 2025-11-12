@@ -22,39 +22,57 @@ namespace projectX.Controllers
                     .ThenInclude(sm => sm.Movie)
                 .Include(s => s.ScreeningCinemas)
                     .ThenInclude(sc => sc.Cinema)
-                .Include(s => s.Tickets);
+                .Include(s => s.Tickets)
+                .OrderBy(s => s.ScreeningTime); 
+
             return View(await screenings.ToListAsync());
         }
 
         public IActionResult Create()
         {
-            PopulateDropdowns();
+            ViewData["Cinemas"] = new MultiSelectList(_context.Cinemas, "Id", "Name");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ScreeningTime")] Screening screening, int[] selectedCinemas)
+        public async Task<IActionResult> Create(Screening screening, List<int> SelectedCinemas)
         {
             if (ModelState.IsValid)
             {
-                foreach (var cinemaId in selectedCinemas)
+                try
                 {
-                    var screeningCinema = new ScreeningCinemas
-                    {
-                        CinemaId = cinemaId,
-                        Screening = screening
-                    };
-                    _context.Add(screeningCinema);
-                }
+                    // Create screening
+                    _context.Add(screening);
+                    await _context.SaveChangesAsync();
 
-                _context.Add(screening);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    // Add selected cinemas
+                    if (SelectedCinemas != null)
+                    {
+                        foreach (var cinemaId in SelectedCinemas)
+                        {
+                            screening.ScreeningCinemas.Add(new ScreeningCinemas
+                            {
+                                ScreeningId = screening.Id,
+                                CinemaId = cinemaId
+                            });
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error creating screening: " + ex.Message);
+                }
             }
-            PopulateDropdowns();
+
+            // If we got this far, something failed; repopulate cinemas
+            ViewData["Cinemas"] = new MultiSelectList(_context.Cinemas, "Id", "Name");
             return View(screening);
         }
+
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -79,9 +97,8 @@ namespace projectX.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ScreeningTime")] Screening screening, int[] selectedCinemas)
+        public async Task<IActionResult> Edit(int id, Screening screening)
         {
-
             if (id != screening.Id)
             {
                 return NotFound();
@@ -92,28 +109,8 @@ namespace projectX.Controllers
                 try
                 {
                     _context.Update(screening);
-
-                    var existingScreeningCinemas = _context.ScreeningCinemas
-                        .Where(sc => sc.ScreeningId == id).ToList();
-
-                    if (existingScreeningCinemas.Any())
-                    {
-                        _context.ScreeningCinemas.RemoveRange(existingScreeningCinemas);
-                        await _context.SaveChangesAsync();
-                    }
-
-
-                    foreach (var cinemaId in selectedCinemas)
-                    {
-                        var screeningCinema = new ScreeningCinemas
-                        {
-                            ScreeningId = id,
-                            CinemaId = cinemaId
-                        };
-                        _context.Add(screeningCinema);
-                    }
-
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,9 +123,7 @@ namespace projectX.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            PopulateDropdowns(selectedCinemas);
             return View(screening);
         }
 

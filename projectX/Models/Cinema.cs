@@ -10,7 +10,7 @@ namespace projectX.Models
         public string? Name { get; set; }
         [Required]
         public string? Adress { get; set; }
-        public ICollection<Hall> Halls { get; set; }
-        public ICollection<ScreeningCinemas> ScreeningCinemas { get; set; }
+        public ICollection<Hall>? Halls { get; set; }
+        public ICollection<ScreeningCinemas>? ScreeningCinemas { get; set; }
     }
 }

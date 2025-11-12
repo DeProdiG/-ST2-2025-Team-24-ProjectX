@@ -14,9 +14,10 @@ namespace projectX.Models
         public DateTime ReleaseDate { get; set; }
         [Required]
         public double Rating { get; set; }
-        public ICollection<MovieActors>? MovieActors { get; set; }
+        [Required]
+        public ICollection<MovieActors>? MovieActors { get; set; } = new List<MovieActors>();
+        public ICollection<MovieGenres>? MovieGenres { get; set; }
         public ICollection<ScreeningMovies>? ScreeningMovies { get; set; }
         public ICollection<Review>? Reviews { get; set; }
-        public ICollection<MovieGenres>? MovieGenres { get; set; }
     }
 }

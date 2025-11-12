@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using projectX.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace projectX.Controllers
 {
@@ -14,23 +15,39 @@ namespace projectX.Controllers
             _context = context;
         }
 
+        // GET: Cinemas
         public async Task<IActionResult> Index()
         {
-            var screenings = _context.Cinemas
-                .Include(h => h.Halls)
-                .Include(s => s.ScreeningCinemas)
-                     .ThenInclude(sm => sm.Cinema).ToList();
-            return View(await _context.Cinemas.ToListAsync());
+            var cinemas = await _context.Cinemas.Include(c => c.Halls).ToListAsync();
+            return View(cinemas);
         }
 
+        // GET: Cinemas/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var cinema = await _context.Cinemas
+                .Include(c => c.Halls)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (cinema == null)
+                return NotFound();
+
+            return View(cinema);
+        }
+
+        // GET: Cinemas/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Cinemas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Cinema cinema)
+        public async Task<IActionResult> Create([Bind("Id,Name,Adress")] Cinema cinema)
         {
             if (ModelState.IsValid)
             {
@@ -41,29 +58,26 @@ namespace projectX.Controllers
             return View(cinema);
         }
 
+        // GET: Cinemas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var cinema = await _context.Cinemas.FindAsync(id);
             if (cinema == null)
-            {
                 return NotFound();
-            }
+
             return View(cinema);
         }
 
+        // POST: Cinemas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Cinema cinema)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Adress")] Cinema cinema)
         {
             if (id != cinema.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -75,42 +89,40 @@ namespace projectX.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CinemaExists(cinema.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(cinema);
         }
 
+        // GET: Cinemas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var cinema = await _context.Cinemas.FirstOrDefaultAsync(m => m.Id == id);
+            var cinema = await _context.Cinemas
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (cinema == null)
-            {
                 return NotFound();
-            }
 
             return View(cinema);
         }
 
+        // POST: Cinemas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cinema = await _context.Cinemas.FindAsync(id);
-            _context.Cinemas.Remove(cinema);
-            await _context.SaveChangesAsync();
+            if (cinema != null)
+            {
+                _context.Cinemas.Remove(cinema);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

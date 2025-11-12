@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace projectX.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250126220311_ggbg")]
-    partial class ggbg
+    [Migration("20251111143734_AddQuantityAndUserTypeToTicket")]
+    partial class AddQuantityAndUserTypeToTicket
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,9 +63,6 @@ namespace projectX.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ScreeningId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -176,7 +173,6 @@ namespace projectX.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MovieId")
@@ -255,11 +251,17 @@ namespace projectX.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("ScreeningId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UserType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -11,7 +11,6 @@ namespace projectX.Models
         public int Capacity { get; set; }
 
         [Required]
-        [ForeignKey("Cinema")]
         public int CinemaId { get; set; }
         public Cinema? Cinema { get; set; }
     }

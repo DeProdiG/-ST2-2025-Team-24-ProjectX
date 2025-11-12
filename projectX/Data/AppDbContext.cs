@@ -23,8 +23,10 @@ public class AppDbContext : DbContext
     public DbSet<Hall> Halls { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Actor> Actors { get; set; }
+    public DbSet<MovieActors> MovieActors { get; set; }
     public DbSet<ScreeningMovies> ScreeningMovies { get; set; }
     public DbSet<ScreeningCinemas> ScreeningCinemas { get; set; }
+    public DbSet<MovieGenres> MovieGenres { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

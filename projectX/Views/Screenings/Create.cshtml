@@ -1,48 +1,202 @@
 ﻿@model projectX.Models.Screening
-
 @{
-    ViewData["Title"] = "Create Screening";
+    ViewData["Title"] = "Add Screening";
 }
 
-<h2>Create Screening</h2>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0 rounded-3 navbar-fixed-top-fix">
+                <div class="card-header bg-gradient-success text-white py-4 rounded-top-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>Create New Screening
+                        </h2>
+                        <a asp-action="Index" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Back to List
+                        </a>
+                    </div>
+                </div>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" id="createForm">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Name" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-film me-2 text-primary"></i>Screening Name *
+                                </label>
+                                <input asp-for="Name" class="form-control form-control-lg" placeholder="Enter screening name" required />
+                                <span asp-validation-for="Name" class="text-danger small mt-1"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="ScreeningTime" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-clock me-2 text-primary"></i>Screening Time *
+                                </label>
+                                <input asp-for="ScreeningTime" class="form-control form-control-lg" type="datetime-local" required />
+                                <span asp-validation-for="ScreeningTime" class="text-danger small mt-1"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <label for="SelectedCinemas" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-video me-2 text-primary"></i>Select Cinemas
+                                </label>
+                                <select id="SelectedCinemas" name="SelectedCinemas" class="form-select form-select-lg" multiple>
+                                    @if (ViewData["Cinemas"] is MultiSelectList cinemasList && cinemasList != null)
+                                    {
+                                        foreach (var item in cinemasList)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="" disabled>No cinemas available</option>
+                                    }
+                                </select>
+                                <small class="form-text text-muted mt-1">Hold Ctrl (or Cmd on Mac) to select multiple cinemas</small>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a asp-action="Index" class="btn btn-outline-secondary me-md-2 px-4">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-success px-4" id="submitBtn">
+                                        <i class="fas fa-plus me-2"></i>Create Screening
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="ScreeningTime" class="control-label"></label>
-        <input asp-for="ScreeningTime" class="form-control" type="datetime-local" />
-        <span asp-validation-for="ScreeningTime" class="text-danger"></span>
-    </div>
+@section Styles {
+    <style>
+        .navbar-fixed-top-fix {
+            padding-top: 60px;
+        }
 
-    <div class="form-group">
-        <label for="Cinemas">Cinemas</label>
-        <select id="Cinemas" name="selectedCinemas" class="form-control" single>
-            @if (ViewData["Cinemas"] is MultiSelectList cinemasList && cinemasList != null)
-            {
-                foreach (var item in cinemasList)
-                {
-                    <option value="@item.Value">@item.Text</option>
-                }
+        @@media (max-width: 768px) {
+            .navbar-fixed-top-fix {
+                padding-top: 70px;
             }
-            else
-            {
-                <option disabled>No cinemas available</option>
+        }
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%) !important;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #56ab2f;
+                box-shadow: 0 0 0 0.2rem rgba(86, 171, 47, 0.25);
+                transform: translateY(-2px);
             }
-        </select>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+
+        .form-control-lg {
+            min-height: 3.5rem;
+        }
+
+        .card {
+            border: none;
+        }
+
+        .btn {
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            color: #000;
+        }
+
+            .btn-success:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
+                color: #000;
+            }
+
+        select[multiple] {
+            min-height: 150px;
+        }
+
+        .alert-danger {
+            border-radius: 0.75rem;
+            border: none;
+        }
+    </style>
+}
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Debugging: Check if form is being submitted
+        document.getElementById('createForm').addEventListener('submit', function (e) {
+            console.log('Form submitted!');
+            // Show loading state on button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+            submitBtn.disabled = true;
+        });
+
+        // Alternative: If there are still issues, try this simple approach
+        function submitForm() {
+            console.log('Submit function called');
+            document.getElementById('createForm').submit();
+        }
+
+        // Check if form validation is working
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('createForm');
+            console.log('Form found:', form);
+
+            // Add basic validation
+            form.addEventListener('submit', function (event) {
+                const nameInput = document.querySelector('#Name');
+                const timeInput = document.querySelector('#ScreeningTime');
+
+                if (!nameInput.value.trim()) {
+                    event.preventDefault();
+                    alert('Please enter a screening name');
+                    return false;
+                }
+
+                if (!timeInput.value) {
+                    event.preventDefault();
+                    alert('Please select a screening time');
+                    return false;
+                }
+
+                return true;
+            });
+        });
+    </script>
 }

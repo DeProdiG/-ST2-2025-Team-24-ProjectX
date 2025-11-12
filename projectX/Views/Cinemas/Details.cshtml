@@ -1,0 +1,236 @@
+﻿@model projectX.Models.Cinema
+@{
+    ViewData["Title"] = "Cinema details";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cinema-details-body {
+            background: var(--primary-gradient);
+            min-height: calc(100vh - 160px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 2rem 0;
+            margin: 0;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .details-container {
+            padding: 2.5rem;
+        }
+
+        .cinema-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--secondary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            margin: 0 auto 2rem;
+        }
+
+        .detail-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary-modern {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+            .btn-primary-modern:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .btn-secondary-modern {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            width: 100%;
+        }
+
+            .btn-secondary-modern:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+                color: white;
+            }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+            .action-buttons .btn {
+                flex: 1;
+            }
+
+        @@media (max-width: 768px) {
+            .details-container {
+                padding: 1.5rem;
+            }
+
+            .cinema-details-body {
+                padding: 1rem;
+                min-height: calc(100vh - 140px);
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+}
+
+<div class="cinema-details-body">
+    <div class="glass-card">
+        <div class="header-section">
+            <h2 class="mb-2">Cinema Details</h2>
+            <p class="mb-0">View detailed information about this cinema</p>
+        </div>
+
+        <div class="details-container">
+            <div class="cinema-icon">
+                <i class="bi bi-camera-reels"></i>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-label">Cinema Name</div>
+                <div class="detail-value">@Model.Name</div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-label">Address</div>
+                <div class="detail-value">
+                    <i class="bi bi-geo-alt me-2"></i>@Model.Adress
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">@(Model.Halls?.Count ?? 0)</div>
+                    <div class="stat-label">Halls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@(Model.ScreeningCinemas?.Count ?? 0)</div>
+                    <div class="stat-label">Screenings</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary-modern">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Cinema
+                </a>
+                <a asp-action="Index" class="btn btn-secondary-modern">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

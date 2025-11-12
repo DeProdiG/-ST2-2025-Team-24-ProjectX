@@ -1,8 +1,577 @@
 ﻿@{
-    ViewData["Title"] = "_Layout";
+    ViewData["Title"] = "Cinema ProjectX";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section - Full Screen -->
+<section class="hero-section-full">
+    <div class="container-fluid h-100 px-0">
+        <div class="row h-100 g-0 align-items-center">
+            <!-- Text Content -->
+            <div class="col-lg-6 hero-text-content">
+                <div class="hero-inner-content">
+                    <h1 class="hero-main-title">
+                        Experience Cinema<br>
+                        <span class="hero-highlight">Like Never Before</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        <strong class="brand-accent">Born for Tabor</strong> - Immerse yourself in state-of-the-art
+                        theaters with cutting-edge technology and unparalleled comfort.
+                    </p>
+
+                    <!-- Features in Row -->
+                    <div class="hero-features">
+                        <div class="feature-box">
+                            <div class="feature-number">4K</div>
+                            <div class="feature-name">Laser Projection</div>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-number">Dolby</div>
+                            <div class="feature-name">Atmos Sound</div>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-number">Cozy</div>
+                            <div class="feature-name">Comfort Seating</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="hero-actions">
+                        <a asp-controller="Movies" asp-action="Index" class="btn btn-primary btn-hero">
+                            <i class="bi bi-play-circle me-2"></i>Browse Movies
+                        </a>
+                        <a asp-controller="Screenings" asp-action="Index" class="btn btn-outline-light btn-hero">
+                            <i class="bi bi-calendar-event me-2"></i>View Showtimes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Content -->
+            <div class="col-lg-6 hero-visual-content">
+                <div class="cinema-visual">
+                    <div class="main-visual">
+                        <div class="visual-overlay">
+                            <div class="cinema-label">
+                                <i class="bi bi-play-circle me-2"></i>
+                                Cinema Experience
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section - Full Screen -->
+<section class="features-section-full py-5 bg-light">
+    <div class="container-fluid px-0">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Why Choose Cinema ProjectX?</h2>
+                <p class="lead text-muted">Experience the difference with our premium features</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="bi bi-display text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">4K Laser Projection</h4>
+                        <p class="text-muted">Crystal-clear image quality with our state-of-the-art 4K laser projection systems.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="bi bi-soundwave text-success"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Dolby Atmos Sound</h4>
+                        <p class="text-muted">Immersive audio experience with our premium Dolby Atmos sound systems.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center p-4 h-100">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="bi bi-cup-straw text-warning"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Gourmet Food & Drinks</h4>
+                        <p class="text-muted">Enjoy our curated selection of gourmet snacks, meals, and beverages.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions Section - Full Screen -->
+<section class="actions-section-full py-5">
+    <div class="container-fluid px-0">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="action-card text-center p-4 bg-primary text-white rounded-3 h-100">
+                        <i class="bi bi-film display-6 mb-3"></i>
+                        <h4 class="fw-bold mb-3">Movies</h4>
+                        <p class="mb-3">Browse our extensive collection of latest and classic movies</p>
+                        <a asp-controller="Movies" asp-action="Index" class="btn btn-light btn-sm">Explore</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="action-card text-center p-4 bg-success text-white rounded-3 h-100">
+                        <i class="bi bi-calendar-week display-6 mb-3"></i>
+                        <h4 class="fw-bold mb-3">Screenings</h4>
+                        <p class="mb-3">Check showtimes and book your preferred screening sessions</p>
+                        <a asp-controller="Screenings" asp-action="Index" class="btn btn-light btn-sm">View Times</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="action-card text-center p-4 bg-warning text-dark rounded-3 h-100">
+                        <i class="bi bi-ticket-perforated display-6 mb-3"></i>
+                        <h4 class="fw-bold mb-3">Tickets</h4>
+                        <p class="mb-3">Manage your bookings and purchase tickets for upcoming shows</p>
+                        <a asp-controller="Tickets" asp-action="Index" class="btn btn-dark btn-sm">Book Now</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="action-card text-center p-4 bg-info text-white rounded-3 h-100">
+                        <i class="bi bi-star display-6 mb-3"></i>
+                        <h4 class="fw-bold mb-3">Reviews</h4>
+                        <p class="mb-3">Read and share your experiences with our movie community</p>
+                        <a asp-controller="Reviews" asp-action="Index" class="btn btn-light btn-sm">See Reviews</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section - Full Screen -->
+<section class="stats-section-full py-5 bg-dark text-white">
+    <div class="container-fluid px-0">
+        <div class="container">
+            <div class="row text-center g-4">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h2 class="display-4 fw-bold text-primary mb-2" data-count="50">0</h2>
+                        <p class="text-uppercase text-white fw-bold" >Movies Available</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h2 class="display-4 fw-bold text-success mb-2" data-count="12">0</h2>
+                        <p class="text-uppercase text-white fw-bold">Screening Rooms</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h2 class="display-4 fw-bold text-warning mb-2" data-count="1000">0</h2>
+                        <p class="text-uppercase text-white fw-bold">Happy Customers</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <h2 class="display-4 fw-bold text-info mb-2" data-count="24">0</h2>
+                        <p class="text-uppercase text-white fw-bold">Daily Screenings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section - Full Screen -->
+<section class="newsletter-section-full py-5 bg-primary text-white">
+    <div class="container-fluid px-0">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h3 class="fw-bold mb-2">Stay Updated</h3>
+                    <p class="mb-0">Get the latest movie news and special offers delivered to your inbox.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="input-group input-group-lg">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-dark" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Reset any default margins and padding */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Full Screen Hero Section */
+    .hero-section-full {
+        height: 100vh;
+        width: 100vw;
+        background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+        color: white;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        max-width: 100vw;
+    }
+
+    /* Full Screen Sections */
+    .features-section-full,
+    .actions-section-full,
+    .stats-section-full,
+    .newsletter-section-full {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        max-width: 100vw;
+    }
+
+    .container-fluid.px-0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+    }
+
+    .row.g-0 {
+        margin-left: 0;
+        margin-right: 0;
+        --bs-gutter-x: 0;
+    }
+
+    /* Text Content */
+    .hero-text-content {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    .hero-inner-content {
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .hero-main-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-highlight {
+        background: linear-gradient(135deg, #0d6efd 0%, #6f42c1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-description {
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        line-height: 1.5;
+        margin-bottom: 2rem;
+        color: #b0b0b0;
+    }
+
+    .brand-accent {
+        color: #ffd700;
+        font-weight: 600;
+    }
+
+    /* Features Grid */
+    .hero-features {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .feature-box {
+        text-align: center;
+        padding: 1rem;
+        min-width: 120px;
+        flex: 1;
+    }
+
+    .feature-number {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #0d6efd, #6f42c1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .feature-name {
+        font-size: 0.9rem;
+        color: #b0b0b0;
+        font-weight: 500;
+    }
+
+    /* Action Buttons */
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero {
+        padding: clamp(0.875rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+        font-size: clamp(1rem, 1.5vw, 1.1rem);
+        font-weight: 600;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+        justify-content: center;
+    }
+
+        .btn-hero.btn-primary {
+            background: linear-gradient(135deg, #0d6efd, #6f42c1);
+            color: white;
+        }
+
+            .btn-hero.btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4);
+            }
+
+        .btn-hero.btn-outline-light {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+            .btn-hero.btn-outline-light:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.5);
+                transform: translateY(-2px);
+            }
+
+    /* Visual Content */
+    .hero-visual-content {
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cinema-visual {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .main-visual {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(13, 110, 253, 0.1), rgba(111, 66, 193, 0.1)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: flex-end;
+        position: relative;
+    }
+
+    .visual-overlay {
+        width: 100%;
+        padding: 2rem;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    }
+
+    .cinema-label {
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        font-weight: 600;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .cinema-label i {
+            color: #0d6efd;
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+        }
+
+    /* Features Section Styles */
+    .features-section-full {
+        background: #f8f9fa !important;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+    /* Action Cards */
+    .action-card {
+        transition: transform 0.3s ease;
+    }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+    /* Stats Section */
+    .stats-section-full {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .stat-item h2 {
+        font-weight: 700;
+    }
+
+    /* Newsletter Section */
+    .newsletter-section-full {
+        background: linear-gradient(135deg, #0d6efd, #6f42c1) !important;
+    }
+
+        /* Container adjustments for full-width sections */
+        .features-section-full .container,
+        .actions-section-full .container,
+        .stats-section-full .container,
+        .newsletter-section-full .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 992px) {
+        .hero-section-full {
+            height: auto;
+            min-height: 100vh;
+        }
+
+        .hero-text-content {
+            height: auto;
+            min-height: 50vh;
+            padding: 4rem 1rem;
+        }
+
+        .hero-visual-content {
+            height: 50vh;
+            min-height: 400px;
+        }
+
+        .hero-inner-content {
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .hero-features {
+            justify-content: center;
+        }
+
+        .hero-actions {
+            justify-content: center;
+        }
+
+        .feature-box {
+            min-width: 100px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .hero-text-content {
+            padding: 3rem 1rem;
+        }
+
+        .hero-features {
+            gap: 1rem;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-hero {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .hero-text-content {
+            padding: 2rem 1rem;
+        }
+
+        .hero-features {
+            gap: 0.5rem;
+        }
+
+        .feature-box {
+            min-width: 80px;
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Animated counter for stats section
+        document.addEventListener('DOMContentLoaded', function () {
+            const counters = document.querySelectorAll('.stat-item h2');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-count');
+                const count = +counter.innerText;
+                const increment = target / speed;
+
+                const updateCount = () => {
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment);
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+
+                updateCount();
+            });
+        });
+    </script>
+}

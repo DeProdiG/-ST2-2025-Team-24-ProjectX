@@ -1,20 +1,173 @@
 ﻿@model projectX.Models.Cinema
+@{
+    ViewData["Title"] = "Add cinema";
+}
 
-<h1>Create Cinema</h1>
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        .cinema-form-body {
+            background: var(--primary-gradient);
+            min-height: calc(100vh - 160px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 2rem 0;
+            margin: 0;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .form-container {
+            padding: 2.5rem;
+        }
+
+        .form-control-modern {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+            .form-control-modern:focus {
+                background: rgba(255, 255, 255, 0.95);
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+
+        .form-label-modern {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary-modern {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+            .btn-primary-modern:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .btn-secondary-modern {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+            .btn-secondary-modern:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+                color: white;
+            }
+
+        .form-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--secondary-gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        @@media (max-width: 768px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .cinema-form-body {
+                padding: 1rem;
+                min-height: calc(100vh - 140px);
+            }
+        }
+    </style>
+}
+
+<div class="cinema-form-body">
+    <div class="glass-card">
+        <div class="header-section">
+            <h2 class="mb-2">Create New Cinema</h2>
+            <p class="mb-0">Add a new cinema location to your collection</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-icon">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+
+            <form asp-action="Create">
+                <div class="form-group mb-4">
+                    <label asp-for="Name" class="form-label-modern"></label>
+                    <input asp-for="Name" class="form-control form-control-modern" placeholder="Enter cinema name" />
+                    <span asp-validation-for="Name" class="text-danger mt-1 d-block"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Adress" class="form-label-modern"></label>
+                    <input asp-for="Adress" class="form-control form-control-modern" placeholder="Enter cinema address" />
+                    <span asp-validation-for="Adress" class="text-danger mt-1 d-block"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary-modern">
+                    <i class="bi bi-plus-circle-fill me-2"></i>Create Cinema
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary-modern">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Adress" class="control-label"></label>
-        <input asp-for="Adress" class="form-control" />
-        <span asp-validation-for="Adress" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+</div>

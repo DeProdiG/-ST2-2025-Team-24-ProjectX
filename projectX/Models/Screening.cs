@@ -12,8 +12,9 @@ namespace projectX.Models
 
         [Required]
         public DateTime ScreeningTime { get; set; }
-        public required ICollection<ScreeningMovies> ScreeningMovies { get; set; }
-        public ICollection<Ticket> Tickets { get; set; }
-        public required ICollection<ScreeningCinemas> ScreeningCinemas { get; set; }
+        public ICollection<ScreeningMovies> ScreeningMovies { get; set; } = new List<ScreeningMovies>();
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<ScreeningCinemas> ScreeningCinemas { get; set; } = new List<ScreeningCinemas>();
+
     }
 }
